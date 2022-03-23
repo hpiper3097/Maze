@@ -1,17 +1,18 @@
 import numpy as np
 from random import choice, randint
 
-def prims_bool():
-    rows = 20
-    cols = 20 
+def prims_bool(r, c):
+    rows = r
+    cols = c
 
     mz = np.zeros((rows, cols), dtype=np.int8)
-    mz_visited = np.zeros((rows, cols), dtype=np.int8)
+
+    mz_hist = []
+    mz_hist.append(mz.copy())
 
     x = randint(1, rows-2)
     y = randint(1, cols-2)
     mz[x, y] = 1
-    mz_visited[x, y] = 1
 
     walls = []
     walls.append((x-1, y))
@@ -36,6 +37,9 @@ def prims_bool():
         return sc
 
     while walls:
+        #update maze history
+        if not np.array_equal(mz_hist[-1], mz):
+            mz_hist.append(mz.copy())
         #pick a random wall
         ran_wall = choice(walls)
         assert(walls.count(ran_wall) == 1)
@@ -51,7 +55,6 @@ def prims_bool():
                 if sCel(x, y) < 2:
                     #denote the new path
                     mz[x, y] = 1
-                    mz_visited[x, y] = 1
 
                     #mark new walls
                     #upper cell
@@ -86,7 +89,6 @@ def prims_bool():
                 if sCel(x, y) < 2:
                     #denote the new path
                     mz[x, y] = 1
-                    mz_visited[x, y] = 1
 
                     #mark new walls
                     #upper cell
@@ -121,7 +123,6 @@ def prims_bool():
                 if sCel(x, y) < 2:
                     #denote the new path
                     mz[x, y] = 1
-                    mz_visited[x, y] = 1
 
                     #mark new walls
                     #leftmost cell
@@ -156,7 +157,6 @@ def prims_bool():
                 if sCel(x, y) < 2:
                     #denote the new path
                     mz[x, y] = 1
-                    mz_visited[x, y] = 1
 
                     #mark new walls
                     #leftmost cell
@@ -180,6 +180,7 @@ def prims_bool():
                 for w in walls:
                     if (w[0] == x and w[1] == y):
                         walls.remove(w)
+                
                 continue
 
         for w in walls:
@@ -201,16 +202,42 @@ def prims_bool():
             mz[rows-1, n] = 1
             break
 
-    return mz
+    if not np.array_equal(mz_hist[-1], mz):
+        mz_hist.append(mz.copy())
+    
+    return mz_hist
 
 
 #driver code
 def main():
-    mz = prims_bool()
-    import matplotlib.pyplot as plt
-    plt.pcolormesh(mz)
+    rows = 50
+    cols = rows
+    mz = prims_bool(rows, cols)
+    mzf = np.stack(mz, axis=2)
+    print(np.shape(mzf))
+    print(len(mzf))
+
+    from matplotlib import pyplot as plt, animation
+
+    t = np.arange(len(mz))
+    x = np.arange(rows+1)
+    y= np.arange(cols+1)
+
+    fig, ax = plt.subplots()
+    fig.canvas.set_window_title('Maze!')
+    ax.set_title('still a shit maze haha')
+    cax = ax.pcolormesh(mzf[:, :, -1], vmin=0, vmax=3)
+    fig.colorbar(cax)
+
+    def animate(i):
+        cax.set_array(mzf[:, :, i].flatten())
+
+    anim = animation.FuncAnimation(fig, animate, interval=8, frames=len(t))
+    anim.save('mazegen.mp4')
 #    plt.xticks([])
 #    plt.yticks([])
+
+    plt.draw()
     plt.show()
 
 if __name__ == '__main__':
