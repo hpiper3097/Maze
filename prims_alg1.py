@@ -22,7 +22,6 @@ def prims_bool():
         mz_visited[w[0], w[1]] = 1
 
     def sCel(x, y):
-        print(f'x={x} y={y}')
         sc = 0
         if x != 0:
             if (mz[x-1, y] == 1):
@@ -123,20 +122,20 @@ def prims_bool():
         if ran_wall in walls:
             walls.remove(ran_wall)
     
-    for unv in mz_visited: 
-        for e in unv:
-            if e == 0:
-                e = 1
+    #for unv in mz_visited: 
+    #    for e in unv:
+    #        if e == 0:
+    #            e = 1
 
-    for n in range(1, cols):
-        if mz[1, n] == 1:
-            mz[0, n] = 1
-            break
+    #for n in range(1, cols):
+    #    if mz[1, n] == 1:
+    #        mz[0, n] = 1
+    #        break
 
-    for n in range(cols-1, 0, -1):
-        if mz[rows-2, n] == 1:
-            mz[rows-1, n] = 1
-            break
+    #for n in range(cols-1, 0, -1):
+    #    if mz[rows-2, n] == 1:
+    #        mz[rows-1, n] = 1
+    #        break
 
     return mz
 
