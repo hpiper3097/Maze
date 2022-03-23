@@ -2,8 +2,8 @@ import numpy as np
 from random import choice, randint
 
 def prims_bool():
-    rows = 20
-    cols = 20
+    rows = 15
+    cols = 15 
 
     mz = np.zeros((rows, cols), dtype=np.int8)
     mz_visited = np.zeros((rows, cols), dtype=np.int8)
@@ -38,19 +38,20 @@ def prims_bool():
         return sc
 
     while walls:
+        print(mz_visited, end='\n\n')
+        print(walls, end='\n\n')
         ran_wall = choice(walls)
         x = ran_wall[0]
         y = ran_wall[1]
 
         #case 1
         if x != 0 and x != rows-1:
-            if mz[x-1, y] == 1:
+            if mz[x-1, y] == 1 and mz_visited[x+1, y] == 0:
                 if sCel(x, y) < 2:
                     mz[x, y] = 1
-                    if x != rows-1:
-                        if mz_visited[x+1, y] == 0:
-                            mz_visited[x+1, y] = 1
-                            walls.append((x+1, y))
+                    if mz_visited[x+1, y] == 0:
+                        mz_visited[x+1, y] = 1
+                        walls.append((x+1, y))
                     if y != 0:
                         if mz_visited[x, y-1] == 0:
                             mz_visited[x, y-1] = 1 
@@ -62,14 +63,12 @@ def prims_bool():
                     walls.remove(ran_wall)
                     continue
         #case 2
-        if x != rows - 1:
-            if mz[x+1, y] == 1:
+            if mz[x+1, y] == 1 and mz_visited[x-1, y] == 0:
                 if sCel(x, y) < 2:
                     mz[x, y] = 1
-                    if x != 0:
-                        if mz_visited[x-1, y] == 0:
-                            mz_visited[x-1, y] = 1
-                            walls.append((x-1, y))
+                    if mz_visited[x-1, y] == 0:
+                        mz_visited[x-1, y] = 1
+                        walls.append((x-1, y))
                     if y != 0:
                         if mz_visited[x, y-1] == 0:
                             mz_visited[x, y-1] = 1 
@@ -81,8 +80,8 @@ def prims_bool():
                     walls.remove(ran_wall)
                     continue
         #case 3
-        if y != 0:
-            if mz[x, y-1] == 1:
+        if y != 0 and y != cols-1:
+            if mz[x, y-1] == 1 and mz_visited[x, y+1] == 0:
                 if sCel(x, y) < 2:
                     mz[x, y] = 1
                     if x != 0:
@@ -93,15 +92,13 @@ def prims_bool():
                         if mz_visited[x+1, y] == 0:
                             mz_visited[x+1, y] = 1
                             walls.append((x+1, y))
-                    if y != 0:
-                        if mz_visited[x, y-1] == 0:
-                            mz_visited[x, y-1] = 1 
-                            walls.append((x, y-1))
+                    if mz_visited[x, y-1] == 0:
+                        mz_visited[x, y-1] = 1 
+                        walls.append((x, y-1))
                     walls.remove(ran_wall)
                     continue
         #case 4
-        if y != cols - 1:
-            if mz[x, y+1] == 1:
+            if mz[x, y+1] == 1 and mz_visited[x, y-1] == 0:
                 if sCel(x, y) < 2:
                     mz[x, y] = 1
                     if x != 0:
@@ -112,10 +109,9 @@ def prims_bool():
                         if mz_visited[x+1, y] == 0:
                             mz_visited[x+1, y] = 1
                             walls.append((x+1, y))
-                    if y != cols-1:
-                        if mz_visited[x, y+1] == 0:
-                            mz_visited[x, y+1] = 1 
-                            walls.append((x, y+1))
+                    if mz_visited[x, y+1] == 0:
+                        mz_visited[x, y+1] = 1 
+                        walls.append((x, y+1))
                     walls.remove(ran_wall)
                     continue
 
