@@ -1,5 +1,6 @@
 from adjacency_list import *
 from random import choice, randint
+from maze_animation import MazeAnimator
 
 def loop_erased_walk(nj, compare_to_list, nodes):
     #initialize path with starting val
@@ -54,8 +55,10 @@ def loop_erased_walk(nj, compare_to_list, nodes):
 
 #wilson's algorithm to generate a uniform spanning tree
 #accepts a list of nodes as input
-def wilsons_algorithm(g):
-    nk = 5
+def wilsons_algorithm(g, start=-1):
+    nk = randint(0, len(g)-1)
+    if start != -1:
+        nk = start
     uni_span_tree = [Node(nk)]
     #uni_span_tree_c is just a list of the values of nodes which are not yet present in uni_span_tree
     uni_span_tree_c = [x for x in range(0, len(g))]
@@ -78,12 +81,65 @@ def wilsons_algorithm(g):
 
 #driver code
 def main():
-    pl = Plane2D(4, 5)
+    rows = 6
+    cols = rows
+    pl = Plane2D(rows, cols)
     ust = wilsons_algorithm(pl.nodes)
-    print('OUTPUT::')
+    ustGraph = Graph(rows*cols)
+
     for n in ust:
-        print(f'node: {n.val}\tadj: {n.get_list()}\t og: {pl.nodes[n.val].get_list()}')
+        ustGraph.addNode(n)
+
+    def co(n):
+        return 2*n+1
+    
+    mz2 = []
+    mz2.append(np.zeros(co(cols), dtype=np.int8))
+    i = 0
+    for i in range(rows):
+        li = [0]
+        for j in range(cols):
+            li.append(0)
+            li.append(0)
+        mz2.append(np.array(li)) 
+        mz2.append(np.zeros(co(cols), dtype=np.int8))
+    mz2 = np.array(mz2)
+    
+    for u in ust:
+        temp_row = int(u.val/cols)
+        temp_col = u.val%cols
+        mz2[co(temp_row), co(temp_col)] = 1
+        for j in u.get_list():
+            tr = int(j/cols)
+            tc = j%cols
+            if mz2[co(tr), co(tc)] == 1: 
+                continue
+            if abs(u.val - j) == 1:
+                if j < u.val:
+                    mz2[co(tr), co(tc) + 1] = 1
+                    continue
+                mz2[co(tr), co(tc) - 1] = 1
+                continue
+            if j < u.val:
+                mz2[co(tr) + 1, co(tc)] = 1
+                continue
+            mz2[co(tr) - 1, co(tc)] = 1
+        
+    for i in range(1, co(cols)-1):
+        if mz2[1, i] == 1:
+            mz2[0, i] = 1
+            break
+        
+    for i in range(co(cols)-2, 0, -1):
+        if mz2[rows-2, i] == 1:
+            mz2[co(rows)-1, i] = 1
+            break
+        
+    mAnim = MazeAnimator()
+    mAnim.set_maze(mz2)
+    mAnim.render()
 
 if __name__ == '__main__':
     from plane2D import Plane2D
+    import numpy as np
     main()

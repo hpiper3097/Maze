@@ -1,5 +1,35 @@
 #adjacency list implementation
 #Node.update() allows filling the adjacency_list via func
+
+class Graph:
+    def __init__(self, nodes):
+        self.N = nodes
+        self.graph = {}
+
+    def addNode(self, n):
+        self.graph[n.val] = n
+
+    def __hasCycles(self, v, visited, parent):
+        visited[v] = True 
+        for i in self.graph[v].get_list():
+            if visited[i] == False:
+                if self.__hasCycles(i, visited, v):
+                    return True
+                elif parent != i:
+                    return True
+        return False
+         
+    def hasCycles(self):
+        visited = [False]*(self.V)
+        for i in range(self.N):
+            if visited[i] == False:
+                if self.__hasCycles(i, visited, -1) == True:
+                    return True
+        return False
+
+    def removeCycles(self):
+        pass
+
 class Node:
     def __init__(self, val):
         self.adjacency_list = []
@@ -18,6 +48,6 @@ class Node:
         return self.adjacency_list
 
 class Edge:
-    def __init__(self, node1, node2):
-        self.node1 = node1
-        self.node2 = node2
+    def __init__(self, u, v):
+        self.u = u
+        self.v = v

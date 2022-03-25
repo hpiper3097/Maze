@@ -8,6 +8,9 @@ class Plane2D:
         for i in range(self.rows*self.cols):
             self.nodes.append(Node(i))
             self.nodes[i].update_by_function(self.node_list_init, i)
+        self.graph = Graph(self.rows*self.cols)
+        for n in self.nodes:
+            self.graph.addNode(n)
 
     def node_list_init(self, adj_li, i):
         if (i > self.cols-1):
