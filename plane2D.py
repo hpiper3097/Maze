@@ -6,8 +6,8 @@ class Plane2D:
         self.cols = cols
         self.nodes = []
         for i in range(self.rows*self.cols):
-            self.nodes.append(Node())
-            self.nodes[i].update(self.node_list_init, i)
+            self.nodes.append(Node(i))
+            self.nodes[i].update_by_function(self.node_list_init, i)
 
     def node_list_init(self, adj_li, i):
         if (i > self.cols-1):
@@ -21,8 +21,8 @@ class Plane2D:
         
 #driver code
 def main():
-    pl = Plane2D(5, 5)
-    for i in range(25):
+    pl = Plane2D(3, 3)
+    for i in range(9):
         print(f'{i}:\t{pl.nodes[i].adjacency_list}')
 
 if __name__ == '__main__':
